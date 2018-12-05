@@ -36,8 +36,6 @@ public class RecursiveMap {
 
         for (final RecursiveMap temp : children)
             if (temp != null) halite += temp.halite;
-
-
     }
 
     /**

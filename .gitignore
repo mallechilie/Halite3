@@ -6,3 +6,6 @@
 
 # Replays
 *.hlt
+\.idea/
+
+target/

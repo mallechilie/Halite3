@@ -1,12 +1,12 @@
 package com.michiel.halite3.hlt;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameMap {
     public final int width;
     public final int height;
     public final MapCell[][] cells;
-
     public GameMap(final int width, final int height) {
         this.width = width;
         this.height = height;
@@ -68,12 +68,16 @@ public class GameMap {
             possibleMoves.add(dy < wrapped_dy ? Direction.NORTH : Direction.SOUTH);
         }
 
+        if (source == destination)
+            possibleMoves.add(Direction.STILL);
         return possibleMoves;
     }
 
-    public Direction naiveNavigate(final Ship ship, final Position destination) {
+    public Direction naiveNavigate(final Ship ship, final Position destination, final Random rng) {
         // getUnsafeMoves normalizes for us
-        for (final Direction direction : getUnsafeMoves(ship.position, destination)) {
+        ArrayList<Direction> unsafeMoves = getUnsafeMoves(ship.position, destination);
+        for (int i = 0; i < unsafeMoves.size(); i++) {
+            Direction direction = unsafeMoves.get(rng.nextInt(unsafeMoves.size()));
             final Position targetPos = ship.position.directionalOffset(direction);
             if (!at(targetPos).isOccupied()) {
                 at(targetPos).markUnsafe(ship);
@@ -119,5 +123,18 @@ public class GameMap {
         }
 
         return map;
+    }
+
+    public Direction unsafeNavigate(Ship ship, Position destination, Random rng) {
+        ArrayList<Direction> unsafeMoves = getUnsafeMoves(ship.position, destination);
+        return unsafeMoves.get(rng.nextInt(unsafeMoves.size()));
+    }
+
+    public int getTotalHalite(){
+        int halite = 0;
+        for (int y = 0; y < height; ++y)
+            for (int x = 0; x < width; x++)
+                halite += at(new Position(x, y)).halite;
+        return halite;
     }
 }

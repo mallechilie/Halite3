@@ -1,7 +1,5 @@
 package com.michiel.halite3;
 
-import com.michiel.halite3.MyGame;
-
 public class MyBot {
     public static void main(final String[] args) {
         

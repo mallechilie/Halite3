@@ -33,15 +33,16 @@ public class MyGame {
         game.updateFrame();
         final Player me = game.me;
         final GameMap gameMap = game.gameMap;
+        final MyMap world = new MyMap(gameMap);
 
         final ArrayList<Command> commandQueue = new ArrayList<>();
 
         for (final Ship ship : me.ships.values()) {
             final MyShip myShip = new MyShip(ship);
-            commandQueue.add(myShip.tick(gameMap, me, rng));
+            commandQueue.add(myShip.tick(gameMap, me, world, rng, Constants.MAX_TURNS - game.turnNumber));
         }
 
-        if (game.turnNumber <= 200 && me.halite >= Constants.SHIP_COST && !gameMap.at(me.shipyard).isOccupied()) {
+        if (game.turnNumber <= 200 && me.halite >= Constants.SHIP_COST && !gameMap.at(me.shipyard).isOccupied() && gameMap.getTotalHalite() > 30000) {
             commandQueue.add(me.shipyard.spawn());
         }
 
