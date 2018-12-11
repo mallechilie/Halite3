@@ -26,4 +26,8 @@ public class MapCell {
     public void markUnsafe(final Ship ship) {
         this.ship = ship;
     }
+
+    public void markSafe() {
+        ship = null;
+    }
 }

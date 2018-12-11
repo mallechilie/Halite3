@@ -49,7 +49,8 @@ public class Game {
 
         for (final Player player : players) {
             for (final Ship ship : player.ships.values()) {
-                gameMap.at(ship).markUnsafe(ship);
+                if (!(Constants.NAVIGATION_BEHAVIOUR == Constants.NavigationBehaviour.AGGRESSIVE && player == me))
+                    gameMap.at(ship).markUnsafe(ship);
             }
 
             gameMap.at(player.shipyard).structure = player.shipyard;

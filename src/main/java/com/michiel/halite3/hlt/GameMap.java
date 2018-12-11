@@ -1,5 +1,8 @@
 package com.michiel.halite3.hlt;
 
+import com.michiel.halite3.MyGame;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -7,6 +10,7 @@ public class GameMap {
     public final int width;
     public final int height;
     public final MapCell[][] cells;
+
     public GameMap(final int width, final int height) {
         this.width = width;
         this.height = height;
@@ -73,7 +77,28 @@ public class GameMap {
         return possibleMoves;
     }
 
-    public Direction naiveNavigate(final Ship ship, final Position destination, final Random rng) {
+
+    public Direction navigate(final Ship ship, final Position destination) {
+        return naiveNavigate(ship, destination);
+    }
+
+    private Direction naiveNavigate(@NotNull final Ship ship, final Position destination) {
+        // getUnsafeMoves normalizes for us
+        ArrayList<Direction> unsafeMoves = getUnsafeMoves(ship.position, destination);
+        for (int i = 0; i < unsafeMoves.size(); i++) {
+            Direction direction = unsafeMoves.get(MyGame.rng.nextInt(unsafeMoves.size()));
+            final Position targetPos = ship.position.directionalOffset(direction);
+            if (!at(targetPos).isOccupied()) {
+                at(targetPos).markUnsafe(ship);
+                at(ship.position).markSafe();
+                return direction;
+            }
+        }
+
+        return Direction.STILL;
+    }
+
+    private Direction aggresiveNavigate(@NotNull final Ship ship, final Position destination, final Random rng) {
         // getUnsafeMoves normalizes for us
         ArrayList<Direction> unsafeMoves = getUnsafeMoves(ship.position, destination);
         for (int i = 0; i < unsafeMoves.size(); i++) {
@@ -85,8 +110,9 @@ public class GameMap {
             }
         }
 
-        return Direction.STILL;
+        return unsafeMoves.get(rng.nextInt(unsafeMoves.size()));
     }
+
 
     void _update() {
         for (int y = 0; y < height; ++y) {
@@ -105,6 +131,7 @@ public class GameMap {
             cells[y][x].halite = input.getInt();
         }
     }
+
 
     static GameMap _generate() {
         final Input mapInput = Input.readInput();
@@ -125,12 +152,7 @@ public class GameMap {
         return map;
     }
 
-    public Direction unsafeNavigate(Ship ship, Position destination, Random rng) {
-        ArrayList<Direction> unsafeMoves = getUnsafeMoves(ship.position, destination);
-        return unsafeMoves.get(rng.nextInt(unsafeMoves.size()));
-    }
-
-    public int getTotalHalite(){
+    public int getTotalHalite() {
         int halite = 0;
         for (int y = 0; y < height; ++y)
             for (int x = 0; x < width; x++)

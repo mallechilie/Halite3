@@ -29,6 +29,10 @@ public class Constants {
     public static double INSPIRED_BONUS_MULTIPLIER;
     /** An inspired ship instead spends 1/X% halite to move. */
     public static int INSPIRED_MOVE_COST_RATIO;
+    /** Indicates how the navigation should behave. */
+    public static NavigationBehaviour NAVIGATION_BEHAVIOUR = NavigationBehaviour.AGGRESSIVE;
+
+    public enum NavigationBehaviour { NAIVE, AGGRESSIVE }
 
     public static void populateConstants(final String stringFromEngine) {
         final String[] rawTokens = stringFromEngine.split("[{}, :\"]+");
